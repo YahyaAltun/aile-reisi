@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Aile Reisi</title>
+    <meta name="description" content="Aile Reisi: Türk ailesinin en eğlenceli kart oyunu. Telefonundan tarayıcıyla oyna, yükleme yok.">
+    <meta name="theme-color" content="#FFF6E9">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Aile Reisi">
+    <link rel="icon" type="image/png" href="TemplateData/favicon.png">
+    <link rel="apple-touch-icon" href="TemplateData/apple-touch-icon.png">
+    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <canvas id="unity-canvas" tabindex="-1"></canvas>
+
+    <div id="loading">
+      <img id="crown" src="TemplateData/tac.png" alt="">
+      <h1>AİLE REİSİ</h1>
+      <p class="sub">Kim bu evin reisi olacak?</p>
+      <div id="bar"><div id="fill"></div></div>
+      <p id="status">Sofra kuruluyor...</p>
+      <p id="tip"></p>
+    </div>
+
+    <div id="error">
+      <h2>Oyun açılamadı</h2>
+      <p id="error-text"></p>
+      <button type="button" onclick="location.reload()">Tekrar dene</button>
+    </div>
+
+    <script>
+      (function () {
+        var canvas = document.getElementById("unity-canvas");
+        var loading = document.getElementById("loading");
+        var fill = document.getElementById("fill");
+        var statusEl = document.getElementById("status");
+        var tip = document.getElementById("tip");
+
+        var ua = navigator.userAgent || "";
+        var isIOS = /iPhone|iPad|iPod/i.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+        var standalone = window.navigator.standalone === true ||
+          (window.matchMedia && (window.matchMedia("(display-mode: standalone)").matches || window.matchMedia("(display-mode: fullscreen)").matches));
+        tip.textContent = isIOS && !standalone
+          ? "İpucu: Safari'de Paylaş → \"Ana Ekrana Ekle\" ile uygulama gibi tam ekran açılır."
+          : "İlk açılış biraz sürebilir; sonraki açılışlar çok daha hızlı.";
+
+        function showError(msg) {
+          loading.style.display = "none";
+          document.getElementById("error-text").textContent = msg;
+          document.getElementById("error").style.display = "flex";
+        }
+
+        // iOS'ta iki parmakla yakınlaştırma oyunu kaydırmasın.
+        document.addEventListener("gesturestart", function (e) { e.preventDefault(); });
+
+        var probe = document.createElement("canvas");
+        if (!probe.getContext("webgl2")) {
+          showError("Tarayıcın bu oyunu açamıyor (WebGL 2 yok). iPhone'da iOS 15 veya üstü, Android'de güncel Chrome kullan.");
+          return;
+        }
+
+        var buildUrl = "Build";
+        var config = {
+          arguments: [],
+          dataUrl: buildUrl + "/Web.data.unityweb",
+          frameworkUrl: buildUrl + "/Web.framework.js.unityweb",
+          codeUrl: buildUrl + "/Web.wasm.unityweb",
+          streamingAssetsUrl: "StreamingAssets",
+          companyName: "DefaultCompany",
+          productName: "Aile Reisi",
+          productVersion: "1.0",
+          // Telefonlarda gereğinden yüksek çözünürlük pili ve ısıyı artırır: en fazla 2x.
+          devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+          // Ad, ses ve müzik tercihleri tarayıcıda kalıcı olarak saklansın.
+          autoSyncPersistentDataPath: true,
+          showBanner: function (msg, type) {
+            if (type === "error") showError(msg);
+            else console.warn(msg);
+          }
+        };
+
+        var script = document.createElement("script");
+        script.src = buildUrl + "/Web.loader.js";
+        script.onload = function () {
+          createUnityInstance(canvas, config, function (progress) {
+            var pct = Math.round(progress * 100);
+            fill.style.width = pct + "%";
+            statusEl.textContent = pct < 90 ? "Sofra kuruluyor... %" + pct : "Çaylar demleniyor...";
+          }).then(function (instance) {
+            window.unityInstance = instance;
+            loading.classList.add("done");
+            setTimeout(function () { loading.style.display = "none"; }, 450);
+          }).catch(function (err) {
+            showError(String(err));
+          });
+        };
+        script.onerror = function () {
+          showError("Oyun dosyaları indirilemedi. İnternet bağlantını kontrol edip tekrar dene.");
+        };
+        document.body.appendChild(script);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,126 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #FFF6E9;
+}
+
+body {
+  position: fixed;
+  inset: 0;
+  overscroll-behavior: none;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #4A3426;
+}
+
+#unity-canvas {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  display: block;
+  background: #FFF6E9;
+  outline: none;
+}
+
+#loading, #error {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  box-sizing: border-box;
+  text-align: center;
+  background: radial-gradient(circle at 50% 38%, #FFFDF8 0%, #FFF6E9 55%, #F6E5CC 100%);
+  transition: opacity 0.45s ease;
+}
+
+#loading.done { opacity: 0; pointer-events: none; }
+
+#crown {
+  width: 112px;
+  height: 112px;
+  animation: bob 1.6s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-3deg); }
+  50% { transform: translateY(-10px) rotate(3deg); }
+}
+
+h1 {
+  margin: 10px 0 4px;
+  font-size: 44px;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: #F2B134;
+  -webkit-text-stroke: 2px #4A3426;
+  paint-order: stroke fill;
+  text-shadow: 0 4px 0 rgba(74, 52, 38, 0.18);
+}
+
+.sub {
+  margin: 0 0 28px;
+  font-size: 17px;
+  font-weight: 700;
+  font-style: italic;
+  color: #8A7262;
+}
+
+#bar {
+  width: min(320px, 80vw);
+  height: 18px;
+  border-radius: 10px;
+  background: #FBF0E0;
+  border: 3px solid #4A3426;
+  overflow: hidden;
+}
+
+#fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #E07A5F, #F2B134);
+  transition: width 0.2s ease;
+}
+
+#status {
+  margin: 14px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+#tip {
+  margin: 22px 0 0;
+  max-width: 320px;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #8A7262;
+}
+
+#error { display: none; }
+
+#error h2 { margin: 0 0 10px; font-size: 26px; color: #D9534F; }
+
+#error p { max-width: 340px; font-size: 16px; line-height: 1.45; margin: 0 0 22px; }
+
+#error button {
+  font: inherit;
+  font-size: 18px;
+  font-weight: 800;
+  padding: 12px 28px;
+  border-radius: 16px;
+  border: 3px solid #4A3426;
+  background: #E07A5F;
+  color: #FFFDF8;
+}
